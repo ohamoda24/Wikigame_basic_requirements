@@ -34,6 +34,7 @@ import java.net.URL;
             prepareGUI();
         }
 
+
         public static void main(String[] args) {
             WokoHTML swingControlDemo = new WokoHTML();
             swingControlDemo.showEventDemo();
@@ -53,9 +54,6 @@ import java.net.URL;
             resultSection = new JLabel("results", JLabel.CENTER);
             resultSection.setSize(350, 100);
 
-            cut = new JMenuItem("cut");
-            copy = new JMenuItem("copy");
-            paste = new JMenuItem("paste");
             selectAll = new JMenuItem("selectAll");
             cut.addActionListener(this);
             copy.addActionListener(this);
@@ -63,16 +61,7 @@ import java.net.URL;
             selectAll.addActionListener(this);
 
             mb = new JMenuBar();
-            file = new JMenu("File");
-            edit = new JMenu("Edit");
-            help = new JMenu("Help");
-            edit.add(cut);
-            edit.add(copy);
-            edit.add(paste);
             edit.add(selectAll);
-            mb.add(file);
-            mb.add(edit);
-            mb.add(help);
 
             ta = new JTextArea();
             ta.setBounds(50, 5, WIDTH - 100, HEIGHT - 50);

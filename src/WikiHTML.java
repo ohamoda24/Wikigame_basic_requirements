@@ -1,5 +1,9 @@
 import javax.swing.*;
-import javax.swing.text.html.HTMLDocument;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,20 +13,150 @@ import java.util.ArrayList;
 
 public class WikiHTML {
 
-    String searchterm;
-    boolean foundFinalLink;
-    public String endURL;
+
+    private JFrame mainFrame;
+    private JLabel headerLabel;
+    private JLabel statusLabel;
+    private JPanel controlPanel;
+    private JPanel panel1;
+    private JPanel panel2;
+    private JTextField urlTextField;
+    private JTextField searchBar;
+    private Button goButton;
+    private JTextArea results;
+    private JScrollPane scroll;
+    private JTextArea ta;
+    private int WIDTH = 800;
+    private int HEIGHT = 700;
+    private JTextArea urlBox, search;
+    private JLabel resultSection;
+
+    public JTextField endURL;
     public ArrayList<String> pathway = new ArrayList();
 
     public WikiHTML() {
-        String url = "https://en.wikipedia.org/wiki/Lionel_Messi";
-        endURL = "https://en.wikipedia.org/wiki/Argentina_national_football_team";
-        findMyWiki(url, 0);
+        //https://en.wikipedia.org/wiki/Lionel_Messi
 
-        for (int i= pathway.size()-1; i>= 0; i--){
-            System.out.println("pathway " + i + " is " + pathway.get(i));
+        prepareGUI();
+        showEventDemo();
+        String url = urlTextField.getText();
+        //"https://en.wikipedia.org/wiki/Lionel_Messi";
+        String endURL = searchBar.getText();
+        System.out.println("endURL: " + endURL);
+        System.out.println("search thing is: " + searchBar.getText());
+
+    }
+
+    private void showEventDemo() {
+        headerLabel.setText("Control in action: Button");
+
+        JButton okButton = new JButton("OK");
+        JButton submitButton = new JButton("Submit");
+        JButton cancelButton = new JButton("Cancel");
+
+        okButton.setActionCommand("OK");
+        submitButton.setActionCommand("Submit");
+        cancelButton.setActionCommand("Cancel");
+
+        okButton.addActionListener(new ButtonClickListener());
+        submitButton.addActionListener(new ButtonClickListener());
+        cancelButton.addActionListener(new ButtonClickListener());
+
+        controlPanel.add(okButton);
+        controlPanel.add(submitButton);
+        controlPanel.add(cancelButton);
+
+        mainFrame.setVisible(true);
+    }
+
+    private void prepareGUI() {
+        mainFrame = new JFrame("Java SWING Examples");
+        mainFrame.setSize(WIDTH, HEIGHT);
+        mainFrame.setLayout(new GridLayout(2, 1));
+
+        urlBox = new JTextArea();
+        urlBox.setBounds(10, 10, 100, 10);
+
+        search = new JTextArea();
+        search.setBounds(10, 10, 100, 100);
+
+        resultSection = new JLabel("results", JLabel.CENTER);
+        resultSection.setSize(350, 100);
+
+
+        ta = new JTextArea();
+        ta.setBounds(50, 5, WIDTH - 100, HEIGHT - 50);
+
+
+        panel1 = new JPanel();
+        panel1.setLayout(new GridLayout(1, 2));
+        panel2 = new JPanel();
+        panel2.setLayout(new GridLayout(2, 1));
+        urlTextField = new JTextField();
+        searchBar = new JTextField("searchBar");
+        goButton = new Button("Go button.");
+        goButton.setActionCommand("go");
+        goButton.addActionListener(new ButtonClickListener());
+
+        panel2.add(urlTextField);
+        panel2.add(searchBar);
+        panel1.add(panel2);
+        panel1.add(goButton);
+        results = new JTextArea("Hello");
+        scroll = new JScrollPane(results);
+
+        mainFrame.add(panel1/*, BorderLayout.NORTH*/);
+//        mainFrame.add(results/*, BorderLayout.CENTER*/);
+        mainFrame.add(scroll);
+
+
+        headerLabel = new JLabel("", JLabel.CENTER);
+        statusLabel = new JLabel("", JLabel.CENTER);
+        statusLabel.setSize(350, 100);
+
+        mainFrame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent windowEvent) {
+                System.exit(0);
+            }
+        });
+
+        GridLayout experimentLayout = new GridLayout(0, 2);
+
+
+        new JButton("Button 1");
+        new JButton("Button 2");
+        new JButton("Button 3");
+        new JButton("Long-Named Button 4");
+        new JButton("5");
+
+        controlPanel = new JPanel();
+        controlPanel.setLayout(new FlowLayout());
+
+        // mainFrame.add(headerLabel);
+        //  mainFrame.add(controlPanel);
+        //mainFrame.add(statusLabel);
+        mainFrame.setVisible(true);
+
+    }
+
+    private class ButtonClickListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+
+            String command = e.getActionCommand();
+
+            if (command.equals("go")) {
+                // results.append("i have clicked go");
+                findMyWiki(urlTextField.getText(), 0);
+
+                for (int i = pathway.size() - 1; i >= 0; i--) {
+                    System.out.println("pathway " + i + " is " + pathway.get(i));
+                }
+            }
         }
     }
+
+
+
 
     public boolean findMyWiki(String originalLink, int depth) {
 
@@ -33,15 +167,18 @@ public class WikiHTML {
         int endQuotationResult = 0;
 
         System.out.println("this is the depth: " + depth + " this is the original link: " + originalLink);
+        System.out.println("this is the endLink: " + searchBar.getText());
         //base case
-        if (originalLink.equals(endURL)) {
+        if (originalLink.equals(searchBar.getText())) {
             System.out.println("found final link " + depth);
-
             return true;
         } else if (depth == 2) {
 
             return false;
-        } else { //recursive case
+        }
+
+
+        else { //recursive case
             try {
                 String finalString;
                 //   System.out.print("hello \n");
@@ -61,15 +198,7 @@ public class WikiHTML {
                         //System.out.println("this is the line: " + line);
                         String halfString;
                         halfString = line.substring(xResult, endQuotationResult);
-                        // System.out.println("Link ending is: " + halfString);
-                        // System.out.println(halfString);
-//                        if (!line.contains(":")) {
-//                            childLinks.add(halfString);
-//                        }
 
-
-//                findLink();
-                        //  System.out.println(line);
                         if (!originalLink.equals(halfString) && !halfString.contains(":")) {
                             halfString = "https://en.wikipedia.org" + halfString;
 
@@ -79,14 +208,7 @@ public class WikiHTML {
                                 pathway.add(halfString);
                                 return true;
                             }
-//                            if (!line.contains(":")){
-//                                xResult = line.indexOf(":") + 1;
-//                                endQuotationResult = line.indexOf(":", xResult + 1);
-//                                halfString = line.substring(xResult, endQuotationResult);
-//                                halfString = "https://en.wikipedia.org" + halfString;
-//                                childLinks.add(halfString);
-//
-//                            }
+
                             //half string should not equal main page or messi page or include colons
 
 
@@ -108,7 +230,7 @@ public class WikiHTML {
         return false;
     }
 
-    public void recursionSteps(String originalLink, int depth) {
+  /* public void recursionSteps(String originalLink, int depth) {
         System.out.println(depth + "   " + originalLink);
         if (originalLink.contains(searchterm) | depth == 2) {
             if (originalLink.contains(searchterm)) {
@@ -127,12 +249,11 @@ public class WikiHTML {
         }
 
 
-    }
+    }*/
 
 
     public static void main(String[] args) {
         WikiHTML myApp = new WikiHTML();
-
 
     }
 }
